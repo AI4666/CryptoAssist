@@ -3,7 +3,7 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, TrendingUp } from 'lucide-react';
-import { ChartTooltipContent } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Badge } from '@/components/ui/badge';
 import { CryptoIcon } from './crypto-icons';
 
@@ -15,6 +15,13 @@ const chartData = [
   { month: 'May', value: 16890 },
   { month: 'Jun', value: 18321 },
 ];
+
+const chartConfig = {
+    value: {
+        label: "Value",
+        color: "hsl(var(--primary))",
+    },
+};
 
 const assets = [
     { name: 'Bitcoin', symbol: 'BTC', value: 11987.45, allocation: '45.1%', change: '+2.5%' },
@@ -34,18 +41,20 @@ export default function PortfolioOverview() {
         <div className="text-4xl font-bold font-headline">$26,641.79</div>
         <p className="text-xs text-muted-foreground">+20.1% from last month</p>
         <div className="h-[200px] mt-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="month" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${(value as number/1000)}k`} />
-                <Tooltip 
-                    cursor={{fill: 'hsl(var(--muted))'}}
-                    content={<ChartTooltipContent indicator='dot' />}
-                />
-                <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <ChartContainer config={chartConfig} className="w-full h-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 20, right: 20, bottom: 0, left: -20 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="month" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${(value as number/1000)}k`} />
+                  <ChartTooltip 
+                      cursor={{fill: 'hsl(var(--muted))'}}
+                      content={<ChartTooltipContent indicator='dot' hideLabel />}
+                  />
+                  <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartContainer>
         </div>
         <div className="mt-6">
             <h3 className="text-lg font-semibold mb-2">Asset Allocation</h3>
