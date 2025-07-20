@@ -1,9 +1,9 @@
-import { ArrowDownLeft, ArrowUpRight, DollarSign, Wallet } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { ArrowDownLeft, ArrowUpRight, ShieldCheck, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { CryptoIcon } from './crypto-icons';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 const transactions = [
     { type: 'Received', coin: 'Bitcoin', symbol: 'BTC', amount: '+0.05 BTC', value: '+$2,500.00', date: '2 days ago' },
@@ -32,6 +32,16 @@ export default function SecureWallet() {
                 <ArrowUpRight className="mr-2 h-4 w-4" /> Withdraw
             </Button>
         </div>
+
+        <Alert className="mb-6 bg-blue-50 border-blue-200">
+            <ShieldCheck className="h-4 w-4 text-blue-600" />
+            <AlertTitle className="text-blue-800">Identity Verification Required</AlertTitle>
+            <AlertDescription className="text-blue-700">
+                To comply with financial regulations and ensure the security of your assets, please complete identity verification. This process is essential for handling different types of digital assets.
+                <Button variant="link" className="p-0 h-auto ml-1 text-blue-800">Verify Now</Button>
+            </AlertDescription>
+        </Alert>
+        
         <CardDescription className="mb-2">Recent Transactions</CardDescription>
         <Table>
           <TableHeader>
