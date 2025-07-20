@@ -1,7 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, Info } from 'lucide-react';
 import { CryptoIcon } from './crypto-icons';
+import { Alert, AlertDescription } from './ui/alert';
 
 const marketData = [
   { symbol: 'BTC', name: 'Bitcoin', price: '$50,123.45', change: '+2.5%', marketCap: '$980.5B' },
@@ -52,6 +53,12 @@ export default function MarketData() {
             ))}
           </TableBody>
         </Table>
+        <Alert className="mt-6 bg-gray-50 border-gray-200">
+            <Info className="h-4 w-4 text-gray-600" />
+            <AlertDescription className="text-gray-700 text-xs">
+                The data displayed is for informational purposes only and does not constitute investment advice. Prices are indicative and may not be real-time.
+            </AlertDescription>
+        </Alert>
       </CardContent>
     </Card>
   );
