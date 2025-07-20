@@ -63,7 +63,7 @@ export default function SecureWallet() {
                         </div>
                     </div>
                 </TableCell>
-                <TableCell className={`text-right font-medium ${tx.value.startsWith('+') ? 'text-accent-dark' : 'text-foreground'}`}>
+                <TableCell className={`text-right font-medium ${tx.value.startsWith('+') ? 'text-accent' : 'text-foreground'}`}>
                     <div>{tx.amount}</div>
                     <div className="text-xs text-muted-foreground">{tx.value}</div>
                 </TableCell>
