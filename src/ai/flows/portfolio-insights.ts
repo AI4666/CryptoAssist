@@ -23,6 +23,7 @@ const PortfolioInsightsOutputSchema = z.object({
   summary: z.string().describe('A summary of the portfolio performance and potential risks.'),
   recommendations: z.array(z.string()).describe('Personalized recommendations for adjusting the portfolio.'),
   alerts: z.array(z.string()).describe('Important alerts based on market conditions and news.'),
+  disclaimer: z.string().describe('A disclaimer stating that this is not financial advice.'),
 });
 export type PortfolioInsightsOutput = z.infer<typeof PortfolioInsightsOutputSchema>;
 
@@ -38,6 +39,8 @@ const prompt = ai.definePrompt({
 
   Based on the user's portfolio, current market trends, relevant news, and risk tolerance, provide a summary of the portfolio, personalized recommendations, and important alerts.
 
+  **Crucially, you must also provide a disclaimer.** The disclaimer should state that the information provided is for informational purposes only and does not constitute financial advice, and that users should consult with a qualified financial advisor before making any investment decisions.
+
   Portfolio:
   {{#each (keys portfolio)}}
     - {{this}}: {{lookup ../portfolio this}}
@@ -48,19 +51,6 @@ const prompt = ai.definePrompt({
   News: {{{news}}}
 
   Risk Tolerance: {{{riskTolerance}}}
-
-  Summary:
-  {{summary}}
-
-  Recommendations:
-  {{#each recommendations}}
-  - {{this}}
-  {{/each}}
-
-  Alerts:
-  {{#each alerts}}
-  - {{this}}
-  {{/each}}
   `,
 });
 

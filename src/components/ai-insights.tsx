@@ -3,11 +3,12 @@ import { useState } from 'react';
 import { type PortfolioInsightsOutput } from '@/ai/flows/portfolio-insights';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Lightbulb, Loader2, Sparkles, ThumbsUp } from 'lucide-react';
+import { AlertCircle, Lightbulb, Loader2, Sparkles, ThumbsUp, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
 import { generateInsightsAction } from '@/app/actions';
+import { Alert, AlertDescription } from './ui/alert';
 
 export default function AiInsights() {
   const [loading, setLoading] = useState(false);
@@ -103,6 +104,15 @@ export default function AiInsights() {
                 ))}
               </ul>
             </div>
+
+            <Separator />
+
+             <Alert className="bg-gray-50 border-gray-200">
+              <Info className="h-4 w-4 text-gray-600" />
+              <AlertDescription className="text-gray-700 text-xs">
+                {insights.disclaimer}
+              </AlertDescription>
+            </Alert>
             
             <Button onClick={handleGenerate} disabled={loading} variant="outline" className="w-full mt-4">
               {loading ? (
