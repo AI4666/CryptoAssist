@@ -1,8 +1,9 @@
+
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, TrendingUp } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Badge } from '@/components/ui/badge';
 import { CryptoIcon } from './crypto-icons';
@@ -44,7 +45,6 @@ export default function PortfolioOverview() {
           <ChartContainer config={chartConfig} className="w-full h-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 20, right: 20, bottom: 0, left: -20 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="month" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${(value as number/1000)}k`} />
                   <ChartTooltip 
@@ -70,7 +70,7 @@ export default function PortfolioOverview() {
                              <p className="font-medium">${asset.value.toLocaleString()}</p>
                              <p className="text-sm text-muted-foreground">{asset.allocation}</p>
                         </div>
-                         <Badge variant={asset.change.startsWith('+') ? 'default' : 'destructive'} className={`ml-4 ${asset.change.startsWith('+') ? 'bg-accent text-accent-foreground' : ''}`}>
+                         <Badge variant={asset.change.startsWith('+') ? 'default' : 'destructive'} className={`ml-4 w-16 justify-center ${asset.change.startsWith('+') ? 'bg-accent text-accent-foreground' : ''}`}>
                             {asset.change}
                         </Badge>
                     </div>
