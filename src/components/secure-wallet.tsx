@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { CryptoIcon } from './crypto-icons';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { SendDialog } from './send-dialog';
+import { ReceiveDialog } from './receive-dialog';
 
 const transactions = [
     { type: 'Received', coin: 'Bitcoin', symbol: 'BTC', amount: '+0.05 BTC', value: '+$2,500.00', date: '2 days ago' },
@@ -25,12 +27,16 @@ export default function SecureWallet() {
             <p className="text-4xl font-bold font-headline">$26,641.79</p>
         </div>
         <div className="flex space-x-2 mb-6">
-            <Button className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground">
-                <ArrowDownLeft className="mr-2 h-4 w-4" /> Deposit
-            </Button>
-            <Button variant="secondary" className="flex-1">
-                <ArrowUpRight className="mr-2 h-4 w-4" /> Withdraw
-            </Button>
+            <ReceiveDialog>
+                <Button className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground">
+                    <ArrowDownLeft className="mr-2 h-4 w-4" /> Receive
+                </Button>
+            </ReceiveDialog>
+            <SendDialog>
+                <Button variant="secondary" className="flex-1">
+                    <ArrowUpRight className="mr-2 h-4 w-4" /> Send
+                </Button>
+            </SendDialog>
         </div>
 
         <Alert className="mb-6 bg-blue-50 border-blue-200">
