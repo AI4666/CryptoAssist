@@ -1,7 +1,7 @@
 # CryptoAssist: Cryptocurrency Statistical Assistant
 
 ## Student Details
-**Student Name:** [Your Name]  
+**Student Name:** Jorge A Mendoza  
 **Selected Implementation Level:** Level 3 (Full Local Statistical Application)
 
 ## Project Overview

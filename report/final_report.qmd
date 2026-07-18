@@ -1,6 +1,6 @@
 ---
 title: "CryptoAssist: Industry Statistical Assistant"
-author: "[Your Name]"
+author: "Jorge A Mendoza"
 format: 
   pdf:
     toc: true
