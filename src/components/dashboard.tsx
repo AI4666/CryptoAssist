@@ -31,6 +31,7 @@ import AiInsights from './ai-insights';
 import MarketData from './market-data';
 import PortfolioOverview from './portfolio-overview';
 import SecureWallet from './secure-wallet';
+import StatisticalAnalysis from './statistical-analysis';
 
 export function Dashboard() {
   return (
@@ -114,6 +115,9 @@ export function Dashboard() {
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
           <MarketData />
           <AiInsights />
+        </div>
+        <div className="grid gap-4 md:gap-8">
+          <StatisticalAnalysis />
         </div>
       </main>
     </div>
