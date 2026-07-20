@@ -253,17 +253,25 @@ export default function StatisticalAnalysis() {
 
     if (skill_name === 'compare') {
       const mainResult = data.pair.main_result;
+      const coin1 = selectedCoins[0];
+      const coin2 = selectedCoins[1];
+      const estDiff = getVal(mainResult.estimated_difference);
+      const pVal = getVal(mainResult.p_value);
+      const isSignificant = pVal < 0.05;
+      const betterCoin = estDiff > 0 ? coin1 : coin2;
+      const worseCoin = estDiff > 0 ? coin2 : coin1;
+
       return (
         <div className="space-y-4 mb-4">
-          <h3 className="font-semibold text-lg border-b pb-2">T-Test Comparison: {selectedCoins[0]} vs {selectedCoins[1]}</h3>
+          <h3 className="font-semibold text-lg border-b pb-2">T-Test Comparison: {coin1} vs {coin2}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 bg-background shadow-sm rounded-lg border text-center">
               <h3 className="text-muted-foreground text-sm font-medium">Estimated Diff</h3>
-              <p className="text-2xl font-bold">{getVal(mainResult.estimated_difference).toFixed(4)}</p>
+              <p className="text-2xl font-bold">{estDiff.toFixed(4)}</p>
             </div>
             <div className="p-4 bg-background shadow-sm rounded-lg border text-center">
               <h3 className="text-muted-foreground text-sm font-medium">P-Value</h3>
-              <p className="text-2xl font-bold">{getVal(mainResult.p_value).toFixed(4)}</p>
+              <p className={`text-2xl font-bold ${isSignificant ? 'text-green-600' : 'text-slate-700'}`}>{pVal.toFixed(4)}</p>
             </div>
             <div className="p-4 bg-background shadow-sm rounded-lg border text-center">
               <h3 className="text-muted-foreground text-sm font-medium">95% CI</h3>
@@ -273,7 +281,52 @@ export default function StatisticalAnalysis() {
             </div>
           </div>
           <div className="p-4 bg-blue-50 text-blue-900 rounded-md border border-blue-200 mt-4">
-            <strong>Interpretation:</strong> {data.pair.interpretation}
+            <strong>R Interpretation:</strong> {data.pair.interpretation}
+          </div>
+
+          <div className="mt-8 bg-blue-50/50 border border-blue-100 rounded-lg p-6 shadow-sm">
+             <h3 className="text-lg font-bold mb-4 flex items-center text-blue-900">
+               <Scale className="mr-2 h-5 w-5 text-blue-600" /> T-Test Summary & Metric Guide
+             </h3>
+             
+             <div className="space-y-4 text-sm text-blue-900/90 leading-relaxed">
+               <p className="font-semibold mb-2">Here is exactly how to interpret the T-Test results for {coin1} and {coin2}:</p>
+               
+               <div>
+                 <h4 className="font-bold text-base text-blue-950">1. Estimated Diff (Difference)</h4>
+                 <ul className="list-disc pl-5 space-y-1">
+                   <li><strong>What it is:</strong> Simply {coin1}'s average return minus {coin2}'s average return.</li>
+                   <li><strong>How to understand it:</strong> If it is negative, {coin1} is underperforming {coin2}. If it is positive, {coin1} is outperforming.</li>
+                 </ul>
+               </div>
+               
+               <div>
+                 <h4 className="font-bold text-base text-blue-950">2. P-Value (The most important number!)</h4>
+                 <ul className="list-disc pl-5 space-y-1">
+                   <li><strong>What it is:</strong> The probability that the difference you are seeing is just a random fluke.</li>
+                   <li><strong>How to understand it:</strong> If it is less than 0.05, you have found a "Statistically Significant" difference (real, not random). If it is greater than 0.05, the difference is not significant (just random market noise).</li>
+                 </ul>
+               </div>
+
+               <div>
+                 <h4 className="font-bold text-base text-blue-950">3. 95% CI (Confidence Interval)</h4>
+                 <ul className="list-disc pl-5 space-y-1">
+                   <li><strong>What it is:</strong> A range where the <em>true</em> difference between the two coins is guaranteed to lie with 95% confidence.</li>
+                   <li><strong>How to understand it:</strong> If the range includes zero (e.g. [-0.01, 0.02]), there is a chance the true difference is exactly zero. If the range is entirely positive or entirely negative, it means one coin is definitively outperforming the other.</li>
+                 </ul>
+               </div>
+
+               <div className="mt-6 pt-4 border-t border-blue-200">
+                 <h4 className="font-bold text-base text-blue-950">Dynamic Analysis Conclusion:</h4>
+                 <p className="mt-2">
+                   Looking at the T-Test between <strong>{coin1}</strong> and <strong>{coin2}</strong>: The Estimated Difference is <strong>{estDiff.toFixed(4)}</strong>. 
+                   Because the P-Value is <strong>{isSignificant ? 'less than 0.05, this difference IS statistically significant' : 'greater than 0.05, this difference is NOT statistically significant'}</strong>. 
+                   {isSignificant 
+                      ? ` This means we can be mathematically confident that ${betterCoin} truly performs differently than ${worseCoin} over this timeframe.` 
+                      : ` This means any observed difference is likely just random market noise, and statistically, you should treat ${coin1} and ${coin2} as having the same performance.`}
+                 </p>
+               </div>
+             </div>
           </div>
         </div>
       );
