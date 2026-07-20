@@ -2,17 +2,42 @@ if (!require(dplyr)) install.packages("dplyr", repos = "http://cran.us.r-project
 library(dplyr)
 
 # Determine the correct path depending on where the script is run from (backend/ or root)
-dataset_path <- "data/crypto_data.csv"
-if(!file.exists(dataset_path)) {
-  dataset_path <- "../data/crypto_data.csv"
+data_dir <- "data"
+if (!dir.exists(data_dir)) {
+  data_dir <- "../data"
 }
 
-if(file.exists(dataset_path)) {
-    crypto_data <- read.csv(dataset_path, stringsAsFactors = FALSE)
-    crypto_data$Date <- as.Date(crypto_data$Date)
-} else {
-    stop("Could not find data/crypto_data.csv")
+# List of Kaggle CSV files to read
+files_to_read <- c("coin_Bitcoin.csv", "coin_Ethereum.csv", "coin_BinanceCoin.csv")
+
+crypto_data_list <- lapply(files_to_read, function(file) {
+  file_path <- file.path(data_dir, file)
+  if (file.exists(file_path)) {
+    read.csv(file_path, stringsAsFactors = FALSE)
+  } else {
+    NULL
+  }
+})
+
+# Combine all the individual coin data frames into one
+raw_data <- do.call(rbind, crypto_data_list)
+
+if (is.null(raw_data) || nrow(raw_data) == 0) {
+  stop("Could not find Kaggle CSV files in the data directory.")
 }
+
+# Clean and format to match what our skills expect
+crypto_data <- raw_data %>%
+  rename(
+    Coin = Symbol,
+    MarketCap = Marketcap
+  ) %>%
+  mutate(Date = as.Date(Date)) %>%
+  arrange(Coin, Date) %>%
+  group_by(Coin) %>%
+  mutate(DailyReturn = (Close - lag(Close)) / lag(Close)) %>%
+  ungroup() %>%
+  filter(!is.na(DailyReturn)) # Remove first day NAs from lag calculation
 
 # Validation functions
 validate_coin <- function(coin) {

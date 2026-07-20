@@ -13,7 +13,7 @@ run_explore <- function(inputs) {
       stop("The selected outcome contains too much missing data.")
   }
   
-  valid_data <- coin_data[!is.na(coin_data[[variable]]), variable]
+  valid_data <- coin_data[[variable]][!is.na(coin_data[[variable]])]
   
   mean_val <- mean(valid_data)
   sd_val <- sd(valid_data)

@@ -11,8 +11,8 @@ run_compare <- function(inputs) {
       stop("The grouping variable must contain exactly two valid groups.")
   }
   
-  group1 <- crypto_data[crypto_data$Coin == coin1, outcome]
-  group2 <- crypto_data[crypto_data$Coin == coin2, outcome]
+  group1 <- crypto_data[[outcome]][crypto_data$Coin == coin1]
+  group2 <- crypto_data[[outcome]][crypto_data$Coin == coin2]
   
   group1 <- group1[!is.na(group1)]
   group2 <- group2[!is.na(group2)]
