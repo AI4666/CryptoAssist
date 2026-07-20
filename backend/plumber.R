@@ -7,6 +7,7 @@ source("../R/model.R")
 source("../R/trend.R")
 source("../R/outliers.R")
 source("../R/ranking.R")
+source("../R/get_coins.R")
 
 #* @apiTitle CryptoAssist Statistical API
 #* @apiDescription R Plumber API for the Industry Statistical Assistant
@@ -29,6 +30,17 @@ function(req, res) {
 #* @get /health
 function() {
   list(status = "OK", message = "API is running")
+}
+
+#* Get Available Coins
+#* @get /coins
+function(res) {
+  tryCatch({
+    get_available_coins()
+  }, error = function(e) {
+    res$status <- 500
+    list(status = "Error", message = e$message)
+  })
 }
 
 #* Explore Data Skill

@@ -7,8 +7,8 @@ if (!dir.exists(data_dir)) {
   data_dir <- "../data"
 }
 
-# List of Kaggle CSV files to read
-files_to_read <- c("coin_Bitcoin.csv", "coin_Ethereum.csv", "coin_BinanceCoin.csv")
+# Dynamically list all coin CSV files in the data directory
+files_to_read <- list.files(path = data_dir, pattern = "^coin_.*\\.csv$")
 
 crypto_data_list <- lapply(files_to_read, function(file) {
   file_path <- file.path(data_dir, file)
