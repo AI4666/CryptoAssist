@@ -182,6 +182,155 @@ export default function StatisticalAnalysis() {
     );
   };
 
+  const renderRankingSummary = (ranking: any[]) => {
+    if (!ranking || ranking.length === 0) return null;
+
+    const topCoin = getVal(ranking[0].coin);
+    const topSharpe = getVal(ranking[0].sharpe_ratio).toFixed(4);
+    
+    let maxReturnCoin = getVal(ranking[0].coin);
+    let maxReturn = getVal(ranking[0].mean_return);
+    let minVolCoin = getVal(ranking[0].coin);
+    let minVol = getVal(ranking[0].volatility);
+
+    ranking.forEach(r => {
+      if (getVal(r.mean_return) > maxReturn) {
+        maxReturn = getVal(r.mean_return);
+        maxReturnCoin = getVal(r.coin);
+      }
+      if (getVal(r.volatility) < minVol) {
+        minVol = getVal(r.volatility);
+        minVolCoin = getVal(r.coin);
+      }
+    });
+
+    let interpretation = `Based on the Sharpe Ratio, ${topCoin} is currently ranked #1 with a ratio of ${topSharpe}. This means it historically provided the best return for the amount of risk taken. `;
+    
+    if (topCoin !== maxReturnCoin) {
+      interpretation += `Interestingly, ${maxReturnCoin} actually had a higher raw return, but it is ranked lower because it took on significantly more risk (Volatility) to achieve those returns. `;
+    }
+    
+    if (topCoin !== minVolCoin) {
+       interpretation += `Meanwhile, ${minVolCoin} was the safest asset with the lowest volatility, but its returns weren't high enough to beat ${topCoin} in risk-adjusted performance. `;
+    } else {
+       interpretation += `Impressively, ${topCoin} also had the lowest volatility, making it the clear winner in both safety and efficiency.`;
+    }
+
+    return (
+      <div className="mt-8 bg-blue-50/50 border border-blue-100 rounded-lg p-6 shadow-sm">
+         <h3 className="text-lg font-bold mb-4 flex items-center text-blue-900">
+           <ListOrdered className="mr-2 h-5 w-5 text-blue-600" /> Asset Ranking Metrics Guide
+         </h3>
+         
+         <div className="space-y-4 text-sm text-blue-900/90 leading-relaxed">
+           <p className="font-semibold mb-2">This guide explains the metrics used to calculate the official Asset Ranking:</p>
+           
+           <div>
+             <h4 className="font-bold text-base text-blue-950">1. Mean Return</h4>
+             <ul className="list-disc pl-5 space-y-1">
+               <li><strong>What it is:</strong> The average daily profit (or loss) the coin generated.</li>
+               <li><strong>Why it matters:</strong> This is your raw reward. Higher is always better, but looking at returns alone is dangerous because it ignores the risk taken to achieve them.</li>
+             </ul>
+           </div>
+           
+           <div>
+             <h4 className="font-bold text-base text-blue-950">2. Volatility</h4>
+             <ul className="list-disc pl-5 space-y-1">
+               <li><strong>What it is:</strong> The standard deviation of the daily returns (how wild the price swings are).</li>
+               <li><strong>Why it matters:</strong> This is your risk. A high volatility means the coin is a rollercoaster and susceptible to massive crashes. Lower volatility means a smoother, safer ride.</li>
+             </ul>
+           </div>
+           
+           <div>
+             <h4 className="font-bold text-base text-blue-950">3. Sharpe Ratio (The Ranking Metric)</h4>
+             <ul className="list-disc pl-5 space-y-1">
+               <li><strong>What it is:</strong> A formula widely used in finance: <code>(Mean Return) / (Volatility)</code>.</li>
+               <li><strong>Why it matters:</strong> The Sharpe Ratio tells you how much reward you are getting <em>per unit of risk</em>. It is the gold standard for comparing assets because it penalizes coins that only achieve high returns through reckless, dangerous price swings. The higher the Sharpe Ratio, the better the investment.</li>
+             </ul>
+           </div>
+
+           <div className="mt-6 pt-4 border-t border-blue-200">
+             <h4 className="font-bold text-base text-blue-950">Dynamic Analysis Conclusion:</h4>
+             <p className="mt-2">
+               {interpretation}
+             </p>
+           </div>
+         </div>
+      </div>
+    );
+  };
+
+  const renderOutliersSummary = (dataObj: any) => {
+    const coins = Object.keys(dataObj);
+    if (coins.length === 0) return null;
+    
+    let mostOutliersCoin = coins[0];
+    let maxOutliers = getVal(dataObj[coins[0]].main_result.outlier_count);
+    let leastOutliersCoin = coins[0];
+    let minOutliers = maxOutliers;
+    let totalOutliers = 0;
+    
+    coins.forEach(c => {
+      const count = getVal(dataObj[c].main_result.outlier_count);
+      totalOutliers += count;
+      if (count > maxOutliers) {
+        maxOutliers = count;
+        mostOutliersCoin = c;
+      }
+      if (count < minOutliers) {
+        minOutliers = count;
+        leastOutliersCoin = c;
+      }
+    });
+
+    let interpretation = "";
+    if (totalOutliers === 0) {
+       interpretation = `Across your selected coins, no extreme outliers were detected during this timeframe. This suggests relatively normal market behavior without historically massive, unexpected daily crashes or spikes.`;
+    } else {
+       interpretation = `Among your selected coins, ${mostOutliersCoin} is the most erratic asset with ${maxOutliers} extreme price events (outliers). `;
+       if (maxOutliers !== minOutliers) {
+         interpretation += `In contrast, ${leastOutliersCoin} experienced the fewest extreme events (${minOutliers} outliers), making its daily returns far more predictable and less susceptible to sudden, violent market shocks.`;
+       } else {
+         interpretation += `All selected coins experienced a similar number of extreme events.`;
+       }
+    }
+
+    return (
+      <div className="mt-8 bg-blue-50/50 border border-blue-100 rounded-lg p-6 shadow-sm">
+         <h3 className="text-lg font-bold mb-4 flex items-center text-blue-900">
+           <AlertTriangle className="mr-2 h-5 w-5 text-blue-600" /> Outlier Detection Metrics Guide
+         </h3>
+         
+         <div className="space-y-4 text-sm text-blue-900/90 leading-relaxed">
+           <p className="font-semibold mb-2">This guide explains what Outliers are and how they measure extreme risk:</p>
+           
+           <div>
+             <h4 className="font-bold text-base text-blue-950">1. What is an Outlier?</h4>
+             <ul className="list-disc pl-5 space-y-1">
+               <li>In this analysis, an outlier is defined as a daily return that is <strong>more than 3 Standard Deviations</strong> away from the coin's historical average (Z-Score &gt; 3 or &lt; -3).</li>
+               <li>In a perfectly normal market, 99.7% of all daily price movements should fall within 3 standard deviations. When a movement breaks outside this bound, it's considered an extreme, statistically rare market shock (like a sudden crash or a massive pump).</li>
+             </ul>
+           </div>
+           
+           <div>
+             <h4 className="font-bold text-base text-blue-950">2. Why do Outliers matter?</h4>
+             <ul className="list-disc pl-5 space-y-1">
+               <li>Coins with a high number of outliers are susceptible to unpredictable "Black Swan" events. Even if a coin has a good average return, a sudden extreme outlier can wipe out a portfolio.</li>
+               <li>Tracking outlier frequency helps distinguish between a coin that is steadily volatile versus a coin that is normally stable but occasionally experiences violent crashes.</li>
+             </ul>
+           </div>
+
+           <div className="mt-6 pt-4 border-t border-blue-200">
+             <h4 className="font-bold text-base text-blue-950">Dynamic Analysis Conclusion:</h4>
+             <p className="mt-2">
+               {interpretation}
+             </p>
+           </div>
+         </div>
+      </div>
+    );
+  };
+
   const renderModelSummary = (dataObj: any) => {
     const coins = Object.keys(dataObj);
     if (coins.length === 0) return null;
@@ -353,6 +502,7 @@ export default function StatisticalAnalysis() {
               </tbody>
             </table>
           </div>
+          {renderRankingSummary(ranking)}
         </div>
       );
     }
@@ -558,6 +708,7 @@ export default function StatisticalAnalysis() {
         </div>
         {skill_name === 'explore' && renderExploreSummary(data)}
         {skill_name === 'model' && renderModelSummary(data)}
+        {skill_name === 'outliers' && renderOutliersSummary(data)}
       </div>
     );
   };

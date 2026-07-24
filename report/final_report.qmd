@@ -61,10 +61,10 @@ format:
 # Additional Skill 1: Trend Analysis
 - **Skill name:** Trend Analysis
 - **User question:** Is the current price trend bullish or bearish?
-- **Method:** 30-Day Simple Moving Average (SMA).
-- **Validation:** Requires a valid date variable and at least 30 days of historical data for the chosen coin.
-- **Result:** Returns the current price, the 30-day MA, and a "Bullish" or "Bearish" trend label.
-- **Interpretation:** If the current price is above the 30-day moving average, it indicates positive short-term momentum.
+- **Method:** Dynamic Simple Moving Average (SMA), offering 7-Day, 14-Day, 30-Day, and 90-Day lookback windows.
+- **Validation:** Requires a valid date variable and enough historical data to support the chosen window.
+- **Result:** Returns the current price, the selected moving average, and a "Bullish" or "Bearish" trend label.
+- **Interpretation:** If the current price is above the moving average, it indicates positive short-term momentum.
 - **Limitation:** Moving averages are lagging indicators and cannot accurately predict sudden market reversals.
 
 # Additional Skill 2: Outlier Detection
@@ -86,7 +86,7 @@ format:
 - **Limitation:** The simplified Sharpe ratio assumes a risk-free rate of zero and normal distribution of returns.
 
 # Google Antigravity and Agent Skills
-- **How Antigravity was used:** Antigravity was used to generate the Plumber API architecture, write the R statistical functions, and scaffold the Next.js frontend plan.
+- **How Antigravity was used:** Antigravity was used to generate the Plumber API architecture, write the R statistical functions, scaffold the Next.js frontend, and build contextual "Dynamic Metrics Guides" directly into the UI.
 - **How the skills guided the project:** The 6 `SKILL.md` files acted as rigid prompts, ensuring the API routes returned exactly the data structures needed for interpretation and validation.
 - **One useful agent contribution:** The agent correctly suggested a Welch t-test for the compare skill, noting that cryptocurrency variances are rarely equal.
 - **One suggestion corrected:** I had to adjust the trend analysis script to ensure the data was sorted chronologically before calculating the moving average.
@@ -102,7 +102,7 @@ format:
 3. **Implementation Limitation:** The system is purely local and requires the user to start both the R backend and Node frontend manually.
 
 # Reflection
-- **What you learned:** I learned how to decouple statistical logic in R from a modern React frontend using an API layer (Plumber).
+- **What you learned:** I learned how to decouple statistical logic in R from a modern React frontend using an API layer (Plumber), and how to bridge the gap between complex statistics and user understanding by creating dynamic metric interpretations.
 - **What was most difficult:** Handling JSON serialization edge cases between R lists and Javascript objects.
 - **Skill selection:** I selected Trend Analysis, Outliers, and Ranking because they map directly to standard financial indicators used in crypto trading platforms.
 - **Improvements:** With more time, I would replace the synthetic dataset with a live data pipeline using the `quantmod` or `crypto2` R packages.
