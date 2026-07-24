@@ -18,6 +18,7 @@ export default function StatisticalAnalysis() {
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [compareCoin1, setCompareCoin1] = useState('BTC');
   const [compareCoin2, setCompareCoin2] = useState('ETH');
+  const [trendWindow, setTrendWindow] = useState('30');
   
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -45,7 +46,7 @@ export default function StatisticalAnalysis() {
 
   const getVal = (v: any) => Array.isArray(v) ? v[0] : v;
 
-  const runMarketSkill = async (skill: string) => {
+  const runMarketSkill = async (skill: string, overrideWindow?: string) => {
     // Get unique, non-empty selected coins
     const selectedCoins = Array.from(new Set([coin1, coin2, coin3].filter(c => c && c !== 'none')));
     
@@ -78,6 +79,9 @@ export default function StatisticalAnalysis() {
         if (skill === 'model') {
           inputs.outcome_variable = 'DailyReturn';
           inputs.predictor_variables = ['Volume', 'MarketCap'];
+        }
+        if (skill === 'trend') {
+          inputs.window = overrideWindow || trendWindow;
         }
         
         return fetch(`http://localhost:8000/${skill}`, {
@@ -139,6 +143,108 @@ export default function StatisticalAnalysis() {
       range: `${hist.breaks[i].toFixed(2)} to ${hist.breaks[i+1].toFixed(2)}`,
       count: count
     }));
+  };
+
+  const renderTrendSummary = () => {
+    return (
+      <div className="mt-8 bg-blue-50/50 border border-blue-100 rounded-lg p-6 shadow-sm">
+         <h3 className="text-lg font-bold mb-4 flex items-center text-blue-900">
+           <TrendingUp className="mr-2 h-5 w-5 text-blue-600" /> Trend Analysis Metrics Guide
+         </h3>
+         
+         <div className="space-y-4 text-sm text-blue-900/90 leading-relaxed">
+           <p className="font-semibold mb-2">This guide explains how to interpret the Moving Average (MA) chart and trend signals:</p>
+           
+           <div>
+             <h4 className="font-bold text-base text-blue-950">1. Moving Average (MA)</h4>
+             <ul className="list-disc pl-5 space-y-1">
+               <li><strong>What it is:</strong> A constantly updated average price over a specific number of past days (e.g., 7 days for a week, 30 days for a month). It smooths out daily price fluctuations to reveal the underlying trend direction.</li>
+               <li><strong>Timeframes:</strong> Shorter timeframes (like 7-Day) react quickly to price changes but can produce "fakeouts". Longer timeframes (like 90-Day) are slower to react but show the macro, long-term trend more reliably.</li>
+             </ul>
+           </div>
+           
+           <div>
+             <h4 className="font-bold text-base text-blue-950">2. Bullish vs Bearish Signals</h4>
+             <ul className="list-disc pl-5 space-y-1">
+               <li><strong>Bullish (Above MA):</strong> When the current price crosses and stays above the moving average, it suggests buyers are in control and the trend is turning upward.</li>
+               <li><strong>Bearish (Below MA):</strong> When the current price falls below the moving average, it suggests sellers are in control and the trend is turning downward.</li>
+             </ul>
+           </div>
+
+           <div className="mt-6 pt-4 border-t border-blue-200">
+             <h4 className="font-bold text-base text-blue-950">Dynamic Analysis Conclusion:</h4>
+             <p className="mt-2">
+               The chart plots the moving average for each coin. If a coin's price is currently above its moving average, its status will read <span className="text-green-600 font-bold">Bullish</span> below. Use the timeframe selector above the chart to see how the trend changes across different time horizons.
+             </p>
+           </div>
+         </div>
+      </div>
+    );
+  };
+
+  const renderModelSummary = (dataObj: any) => {
+    const coins = Object.keys(dataObj);
+    if (coins.length === 0) return null;
+    
+    let bestCoin = coins[0];
+    let maxR2 = getVal(dataObj[coins[0]].main_result.r_squared);
+    
+    coins.forEach(c => {
+      const r2 = getVal(dataObj[c].main_result.r_squared);
+      if (r2 > maxR2) {
+        maxR2 = r2;
+        bestCoin = c;
+      }
+    });
+
+    let interpretation = "";
+    if (maxR2 < 0.05) {
+       interpretation = `Looking at your selected coins, even the best performing model (${bestCoin} with an R² of ${maxR2.toFixed(4)}) explains less than 5% of the variance. This indicates that the current variables (Volume and Market Cap) explain very little of the daily price movements. The low values highlight the inherent difficulty and randomness in predicting crypto asset movements with these basic features.`;
+    } else if (maxR2 < 0.2) {
+       interpretation = `Looking at your selected coins, the model for ${bestCoin} explains the most variance with an R² of ${maxR2.toFixed(4)}. While it captures some of the relationship, it still explains a relatively small portion (less than 20%) of the daily price movements, meaning other external factors are heavily influencing the price.`;
+    } else {
+       interpretation = `Looking at your selected coins, the model for ${bestCoin} performs the best, with an R² of ${maxR2.toFixed(4)}. This suggests that Volume and Market Cap explain a noticeable portion of ${bestCoin}'s daily return variability.`;
+    }
+
+    const negativeAdjCoins = coins.filter(c => getVal(dataObj[c].main_result.adj_r_squared) < 0);
+    if (negativeAdjCoins.length > 0) {
+      interpretation += ` Note that ${negativeAdjCoins.join(', ')} currently show a negative Adjusted R-Squared, meaning the current predictors actually fit the data slightly worse than just guessing the historical average return.`;
+    }
+
+    return (
+      <div className="mt-8 bg-blue-50/50 border border-blue-100 rounded-lg p-6 shadow-sm">
+         <h3 className="text-lg font-bold mb-4 flex items-center text-blue-900">
+           <BarChartIcon className="mr-2 h-5 w-5 text-blue-600" /> Statistical Model Metrics Guide
+         </h3>
+         
+         <div className="space-y-4 text-sm text-blue-900/90 leading-relaxed">
+           <p className="font-semibold mb-2">This guide explains the metrics displayed in the Statistical Model section:</p>
+           
+           <div>
+             <h4 className="font-bold text-base text-blue-950">1. R-Squared (R²)</h4>
+             <ul className="list-disc pl-5 space-y-1">
+               <li><strong>What it is:</strong> Also known as the Coefficient of Determination. It represents the proportion of the variance in the dependent variable (the asset's daily return) that is predictable from the independent variables (Volume and Market Cap).</li>
+               <li><strong>How to interpret it:</strong> Ranges from 0 to 1 (0% to 100%). In cryptocurrency markets, prices are highly volatile, so seeing very low values (e.g., 0.0003) is common when predicting short-term movements.</li>
+             </ul>
+           </div>
+           
+           <div>
+             <h4 className="font-bold text-base text-blue-950">2. Adjusted R-Squared (Adj R-Sq)</h4>
+             <ul className="list-disc pl-5 space-y-1">
+               <li><strong>What it is:</strong> A modified version of R-Squared adjusted for the number of predictors. It increases only if a new term improves the model more than expected by chance.</li>
+               <li><strong>How to interpret it:</strong> It can occasionally be negative, which simply means the model fits the data worse than a horizontal line. Always use Adj R-Sq instead of R-Squared when comparing models with a different number of predictors.</li>
+             </ul>
+           </div>
+
+           <div className="mt-6 pt-4 border-t border-blue-200">
+             <h4 className="font-bold text-base text-blue-950">Dynamic Analysis Conclusion:</h4>
+             <p className="mt-2">
+               {interpretation}
+             </p>
+           </div>
+         </div>
+      </div>
+    );
   };
 
   const renderExploreSummary = (dataObj: any) => {
@@ -334,7 +440,9 @@ export default function StatisticalAnalysis() {
 
     if (skill_name === 'trend') {
       const allDates = new Set<string>();
+      let currentWindow = 30;
       Object.keys(data).forEach(coin => {
+        if (data[coin]?.main_result?.window) currentWindow = data[coin].main_result.window;
         const dates = data[coin]?.main_result?.plot_data?.date || [];
         dates.forEach((d: string) => allDates.add(d));
       });
@@ -345,7 +453,9 @@ export default function StatisticalAnalysis() {
           const coinData = data[coin].main_result?.plot_data;
           if (coinData && coinData.date) {
             const idx = coinData.date.indexOf(date);
-            if (idx !== -1) row[`${coin}_ma30`] = coinData.ma30[idx];
+            if (idx !== -1) {
+              row[`${coin}_ma`] = coinData.ma_val ? coinData.ma_val[idx] : (coinData.ma30 ? coinData.ma30[idx] : null);
+            }
           }
         });
         return row;
@@ -354,7 +464,21 @@ export default function StatisticalAnalysis() {
 
       return (
         <div className="space-y-4 mb-4">
-          <h3 className="font-semibold text-lg border-b pb-2">Unified Market Trend (30-Day Moving Average)</h3>
+          <div className="flex justify-between items-center border-b pb-2">
+            <h3 className="font-semibold text-lg">Unified Market Trend ({currentWindow}-Day Moving Average)</h3>
+            <div className="flex items-center space-x-2">
+              <label className="text-sm font-medium text-muted-foreground">Timeframe:</label>
+              <Select value={trendWindow} onValueChange={(val) => { setTrendWindow(val); runMarketSkill('trend', val); }}>
+                <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">7-Day (Week)</SelectItem>
+                  <SelectItem value="14">14-Day (2 Weeks)</SelectItem>
+                  <SelectItem value="30">30-Day (Month)</SelectItem>
+                  <SelectItem value="90">90-Day (Quarter)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <div className="h-[400px] w-full bg-background p-4 rounded-lg border pt-6">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
@@ -364,7 +488,7 @@ export default function StatisticalAnalysis() {
                 <Tooltip />
                 <Legend />
                 {Object.keys(data).map((coin, i) => (
-                  <Line key={coin} type="monotone" dataKey={`${coin}_ma30`} stroke={colors[i % colors.length]} dot={false} name={`${coin} 30-Day MA`} strokeWidth={2} />
+                  <Line key={coin} type="monotone" dataKey={`${coin}_ma`} stroke={colors[i % colors.length]} dot={false} name={`${coin} ${currentWindow}-Day MA`} strokeWidth={2} />
                 ))}
               </LineChart>
             </ResponsiveContainer>
@@ -377,6 +501,8 @@ export default function StatisticalAnalysis() {
               ))}
             </ul>
           </div>
+          
+          {renderTrendSummary()}
         </div>
       );
     }
@@ -431,6 +557,7 @@ export default function StatisticalAnalysis() {
           })}
         </div>
         {skill_name === 'explore' && renderExploreSummary(data)}
+        {skill_name === 'model' && renderModelSummary(data)}
       </div>
     );
   };
