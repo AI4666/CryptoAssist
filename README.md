@@ -52,24 +52,28 @@
 Below are screenshots of the different analytical tools available in the Market Insight Dashboard. *(Note: Save your uploaded screenshots into a folder named `assets/screenshots/` to display them here)*
 
 ### 1. Explore Data
-![Explore Data](assets/screenshots/explore.png)
+![Explore Data](assets/screenshots/explore.PNG)
 *Provides a descriptive statistical breakdown and return distribution histogram for selected assets.*
 
 ### 2. T-Test Comparison
-![T-Test Comparison](assets/screenshots/t_test.png)
+![T-Test Comparison](assets/screenshots/t_test.PNG)
 *Executes a Welch Two Sample t-test to determine statistically significant differences in performance between two coins.*
 
 ### 3. Statistical Model
-![Statistical Model](assets/screenshots/statistical_model.png)
+![Statistical Model](assets/screenshots/statistical_model.PNG)
 *Runs Multiple Linear Regression to calculate R-Squared and Adjusted R-Squared, explaining market variance based on trading volume and market cap.*
 
 ### 4. Trend Analysis
-![Trend Analysis](assets/screenshots/trend_analysis.png)
+![Trend Analysis](assets/screenshots/trend_analysis.PNG)
 *Plots dynamic moving averages (7-Day, 14-Day, 30-Day, 90-Day) to identify Bullish or Bearish short-term price momentum.*
 
 ### 5. Outlier Detection
-![Outlier Detection](assets/screenshots/outliers.png)
+![Outlier Detection](assets/screenshots/outliers.PNG)
 *Uses Z-Score Outlier Detection to identify and flag historically extreme market movements across selected assets.*
+
+### 6. Asset Ranking
+![Asset Ranking](assets/screenshots/assets_ranking.PNG)
+*Ranks assets based on their risk-adjusted return (Sharpe Ratio), clearly displaying their raw mean return versus their volatility.*
 
 ## Main Limitations
 1. **Dataset Limitation:** The dataset uses synthetically generated data; real crypto markets exhibit extreme non-linear volatility not fully captured by random generation.
