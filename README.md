@@ -22,6 +22,16 @@
 | Outlier Detection | Which days experienced unusually extreme market movements? | Z-Score Outlier Detection (|Z| > 3) | Count of outliers and specific extreme dates | Identify historical periods of extreme instability to test portfolio resilience. |
 | Asset Ranking | Which coin has the highest risk-adjusted historical return? | Sharpe Ratio (Mean Return / SD) | Ranked list of assets | Prioritize asset allocation towards the highest ranked coin. |
 
+## Architecture Design
+
+![Architecture Design](assets/screenshots/architecture_design.png)
+
+This project leverages a decoupled architecture that separates the heavy statistical computing from the user interface. 
+
+- **Backend (R Analytical Engine)**: The core logic and data processing are handled entirely in R. The `plumber` package is used to wrap these R scripts into a robust REST API, complete with auto-generated Swagger documentation for testing. 
+- **Frontend (Web Application)**: A modern Next.js/React frontend connects to the R API via standard HTTP GET/POST requests. This frontend handles the user experience, dynamically parsing the JSON responses from R into interactive dashboards, charts, and metrics guides.
+- **Source Control**: All development is managed within an IDE and pushed to GitHub for version control.
+
 ## Instructions for Running the Project
 
 ### Prerequisites

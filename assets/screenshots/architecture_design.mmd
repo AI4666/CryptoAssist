@@ -1,0 +1,42 @@
+graph TD
+    %% Define styles for nodes
+    classDef dev fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    classDef backend fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
+    classDef frontend fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    classDef actor fill:#f3e5f5,stroke:#8e24aa,stroke-width:2px,shape:circle;
+
+    %% Actors
+    Developer((Developer)):::actor
+    EndUser((End User)):::actor
+
+    %% Environments
+    subgraph Development & Source Control
+        IDE[IDE <br/> e.g., Project IDX, VS Code, RStudio]:::dev
+        GitHub[GitHub <br/> Version Control Repository]:::dev
+    end
+
+    subgraph Backend - R Analytical Engine
+        RCore[R Programming <br/> Core Logic & Data Processing]:::backend
+        Plumber[plumber.R <br/> REST API Routing]:::backend
+        Swagger[Swagger UI <br/> API Docs & Testing]:::backend
+        
+        RCore -->|Annotated functions| Plumber
+        Plumber -.->|Auto-generates docs| Swagger
+    end
+
+    subgraph Frontend - Web Application
+        UI[Next.js / React UI <br/> User Dashboards & Charts]:::frontend
+    end
+
+    %% Relationships
+    Developer -->|Writes code in| IDE
+    EndUser -->|Interacts with| UI
+    
+    IDE <-->|Push / Pull| GitHub
+    IDE -->|Develops Backend| RCore
+    IDE -->|Develops Frontend| UI
+
+    UI -->|HTTP Requests <br/> GET / POST| Plumber
+    Plumber -->|JSON Responses <br/> Analytical Results| UI
+    
+    Developer -.->|Tests API directly via| Swagger
