@@ -6,6 +6,7 @@
 - Real-Time Data Display: Real-Time Data: Display real-time cryptocurrency market data from integrated APIs.
 - Portfolio Tracking: Portfolio Tracking: Enable users to track their cryptocurrency investments and view their portfolio performance.
 - AI Insights: AI-Powered Insights: Use generative AI tool to provide insights and alerts based on user's portfolio, market trends, and news, informing when or if to suggest actions.
+- Market Insight Dashboard: Industry Statistical Assistant: An interactive dashboard powered by an R Plumber backend providing advanced statistical tools (Trend Analysis, Outlier Detection, Asset Ranking, and T-tests) alongside dynamic, contextual Metrics Guides.
 - Data Security: Data Security: Employ Firebase Security Rules to secure all user data and prevent unauthorized access.
 - Compliance Ready: Regulatory Compliance: Ensure the app design facilitates compliance with KYC/AML and data privacy regulations.
 

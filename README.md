@@ -18,7 +18,7 @@
 | Explore | What is the distribution of daily returns for BTC? | Descriptive statistics & Histogram | Mean, SD, Min, Max, Histogram data | Understand the baseline volatility of an asset to gauge general risk. |
 | Compare | Does BTC have a significantly different average daily return compared to ETH? | Welch Two Sample t-test | Group means, estimated difference, p-value, 95% CI | Choose between two assets based on historical performance differences. |
 | Model | What factors (Volume, MarketCap) are associated with the daily return? | Multiple Linear Regression | R-squared, model coefficients | Identify which market factors are most strongly driving price changes. |
-| Trend Analysis | Is the current price trend bullish or bearish? | 30-Day Moving Average | Current price, 30-day MA, Bullish/Bearish status | Time entry or exit points based on short-term momentum. |
+| Trend Analysis | Is the current price trend bullish or bearish? | Dynamic Moving Average (7, 14, 30, 90-Day) | Current price, selected MA, Bullish/Bearish status | Time entry or exit points based on short-term momentum. |
 | Outlier Detection | Which days experienced unusually extreme market movements? | Z-Score Outlier Detection (|Z| > 3) | Count of outliers and specific extreme dates | Identify historical periods of extreme instability to test portfolio resilience. |
 | Asset Ranking | Which coin has the highest risk-adjusted historical return? | Sharpe Ratio (Mean Return / SD) | Ranked list of assets | Prioritize asset allocation towards the highest ranked coin. |
 
@@ -48,7 +48,28 @@
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Application Interface
-![Application Screenshot](screenshot.png) *(Note: Please add a screenshot of the Next.js app running here)*
+
+Below are screenshots of the different analytical tools available in the Market Insight Dashboard. *(Note: Save your uploaded screenshots into a folder named `assets/screenshots/` to display them here)*
+
+### 1. Explore Data
+![Explore Data](assets/screenshots/explore.png)
+*Provides a descriptive statistical breakdown and return distribution histogram for selected assets.*
+
+### 2. T-Test Comparison
+![T-Test Comparison](assets/screenshots/t_test.png)
+*Executes a Welch Two Sample t-test to determine statistically significant differences in performance between two coins.*
+
+### 3. Statistical Model
+![Statistical Model](assets/screenshots/statistical_model.png)
+*Runs Multiple Linear Regression to calculate R-Squared and Adjusted R-Squared, explaining market variance based on trading volume and market cap.*
+
+### 4. Trend Analysis
+![Trend Analysis](assets/screenshots/trend_analysis.png)
+*Plots dynamic moving averages (7-Day, 14-Day, 30-Day, 90-Day) to identify Bullish or Bearish short-term price momentum.*
+
+### 5. Outlier Detection
+![Outlier Detection](assets/screenshots/outliers.png)
+*Uses Z-Score Outlier Detection to identify and flag historically extreme market movements across selected assets.*
 
 ## Main Limitations
 1. **Dataset Limitation:** The dataset uses synthetically generated data; real crypto markets exhibit extreme non-linear volatility not fully captured by random generation.
@@ -73,3 +94,9 @@
    - **File Created/Changed:** Created `R/ranking.R` and updated `backend/plumber.R`
    - **Reviewed:** I ensured the Sharpe ratio logic correctly divided mean returns by standard deviation over the last 90 days.
    - **Result:** Accepted the agent's logic for filtering by date and grouping by coin.
+
+4. **Request:** "Add dynamic Metric Guides to the UI."
+   - **Skill Used:** Not applicable (direct code modification).
+   - **File Created/Changed:** Updated `src/components/statistical-analysis.tsx` and various R backend files.
+   - **Reviewed:** I verified that the frontend successfully parsed the dynamic data from the backend to generate context-aware interpretations of the statistics.
+   - **Result:** Successfully built a highly educational dashboard bridging complex math and user accessibility.
